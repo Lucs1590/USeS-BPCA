@@ -6,6 +6,19 @@ from tensorflow.keras import layers
 from scripts.bpca_pooling import BPCAPooling
 
 
+def get_layers_number(number):
+    if number == 64:
+        return (128, 128, 64)
+    if number == 128:
+        return (64, 64, 128)
+    if number == 256:
+        return (32, 32, 256)
+    if number == 512:
+        return (16, 16, 512)
+    else:
+        return (0, 0, 0)
+
+
 def get_unetlike_model(img_size, num_classes):
     inputs = keras.Input(shape=img_size + (3,))
 
@@ -30,8 +43,7 @@ def get_unetlike_model(img_size, num_classes):
 
         # x = keras.layers.MaxPooling2D(2, strides=2, padding="same")(x)
         # print(filters)
-        x = BPCAPooling(pool_size=2, stride=2,
-                        expected_shape=get_layers_number(filters))(x)
+        x = BPCAPooling(pool_size=2, stride=2, expected_shape=get_layers_number(filters))(x)
         # print(filters, x.shape)
 
         # Project residual
@@ -70,5 +82,7 @@ def get_unetlike_model(img_size, num_classes):
     return model
 
 
+HEIGHT, WIDTH = 256, 256
+NUM_CLASSES = 3  # background, foreground, boundary
 model = get_unetlike_model(img_size=(HEIGHT, WIDTH), num_classes=NUM_CLASSES)
 model.summary()
