@@ -19,10 +19,9 @@ class BPCAUnpooling(tf.keras.layers.Layer):
     def bpca_unpooling(self, transformed_patches):
         # Compute the region of interest
         h, w, c = self.expected_shape  # block_height, block_width, block_channels
-        d = c // (self.pool_size * self.pool_size)  # block_depth
 
         # Perform the reverse PCA transformation on the transformed patches
-        _, s, v = tf.linalg.svd(transformed_patches, compute_uv=False)
+        _, _, v = tf.linalg.svd(transformed_patches, compute_uv=True)
         pca_components = tf.linalg.matrix_transpose(v[:, :self.n_components])
         original_patches = tf.matmul(transformed_patches, pca_components)
 
@@ -42,7 +41,3 @@ class BPCAUnpooling(tf.keras.layers.Layer):
             [h // self.pool_size, w // self.pool_size, c]
         )
         return original_patches
-
-    def call(self, inputs):
-        unpooled = tf.vectorized_map(self.bpca_unpooling, inputs)
-        return unpooled
