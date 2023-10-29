@@ -9,6 +9,7 @@ class BPCAUnpooling(tf.keras.layers.Layer):
         self.n_components = n_components
         self.expected_shape = expected_shape
 
+        # Modify patch size and strides for upsampling
         self.patch_size = [1, self.pool_size, self.pool_size, 1]
         self.strides = [1, self.stride, self.stride, 1]
 
@@ -36,8 +37,10 @@ class BPCAUnpooling(tf.keras.layers.Layer):
             0.0,
             original_patches
         )
+
+        # Adjust the reshaping to achieve upsampling
         original_patches = tf.reshape(
             original_patches,
-            [h // self.pool_size, w // self.pool_size, c]
+            [h * self.pool_size, w * self.pool_size, c]
         )
         return original_patches
