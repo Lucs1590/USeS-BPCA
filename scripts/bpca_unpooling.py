@@ -22,12 +22,8 @@ class BPCAUnpooling(tf.keras.layers.Layer):
         d = c // (self.pool_size * self.pool_size)  # block_depth
 
         # Perform the reverse PCA transformation on the transformed patches
-        pca_components = tf.linalg.matrix_transpose(
-            tf.linalg.svd(
-                transformed_patches,
-                compute_uv=False
-            ).V[:, :self.n_components]
-        )
+        _, s, v = tf.linalg.svd(transformed_patches, compute_uv=False)
+        pca_components = tf.linalg.matrix_transpose(v[:, :self.n_components])
         original_patches = tf.matmul(transformed_patches, pca_components)
 
         # Revert the PCA transformation by multiplying by the standard deviation and adding the mean
