@@ -16,7 +16,7 @@ def augment(input_image, input_mask):
     # color augmentation
     if tf.random.uniform(()) > 0.5:
         input_image = tf.image.random_saturation(input_image, 0, 2)
-        input_image = tf.image.random_brightness(input_image, 0.5)
+        input_image = tf.image.random_brightness(input_image, 0.35)
         input_image = tf.image.random_contrast(input_image, 0, 2)
 
     # rotation augmentation
@@ -25,6 +25,24 @@ def augment(input_image, input_mask):
         input_image = tf.image.rot90(input_image, k=int(random_degree // 90))
         input_mask = tf.image.rot90(input_mask, k=int(random_degree // 90))
 
+    # Gausian blur augmentation
+    if tf.random.uniform(()) > 0.5:
+        input_image = tf.image.resize(
+            input_image,
+            (256, 256),
+            method="nearest"
+        )
+        input_image = tf.image.resize(
+            input_image,
+            (128, 128),
+            method="nearest"
+        )
+        input_image = tf.image.resize(
+            input_image,
+            (256, 256),
+            method="nearest"
+        )
+    
     return input_image, input_mask
 
 
@@ -55,14 +73,16 @@ def load_image_train(datapoint):
     return input_image, input_mask
 
 
-def plot_augmented_images(dataset):
-    for image, mask in dataset.take(3):
-        plt.figure(figsize=(10, 10))
+def save_augmented_images(dataset, output_dir, num_images=3):
+    for i, (image, mask) in enumerate(dataset.take(num_images)):
+        fig = plt.figure(figsize=(10, 10))
         plt.subplot(1, 2, 1)
         plt.imshow(image)
         plt.subplot(1, 2, 2)
         plt.imshow(mask)
-        plt.show()
+        file_path = f"{output_dir}/image_{i + 1}.png"
+        plt.savefig(file_path)
+        plt.close(fig)
 
 
 if __name__ == "__main__":
@@ -77,5 +97,5 @@ if __name__ == "__main__":
         load_image_train,
         num_parallel_calls=tf.data.AUTOTUNE
     )
-    plot_augmented_images(train_dataset)
+    save_augmented_images(train_dataset, 'resources')
     print("Done")
