@@ -9,7 +9,6 @@ class BPCAUnpooling(tf.keras.layers.Layer):
         self.n_components = n_components
         self.expected_shape = expected_shape
 
-        # Modify patch size and strides for upsampling
         self.patch_size = [1, self.pool_size, self.pool_size, 1]
         self.strides = [1, self.stride, self.stride, 1]
 
@@ -24,7 +23,10 @@ class BPCAUnpooling(tf.keras.layers.Layer):
         # Perform the reverse PCA transformation on the transformed patches
         _, _, v = tf.linalg.svd(transformed_patches, compute_uv=True)
         pca_components = tf.linalg.matrix_transpose(v[:, :self.n_components])
-        original_patches = tf.matmul(transformed_patches, pca_components)
+        original_patches = tf.matmul(
+            transformed_patches,
+            pca_components[..., tf.newaxis]
+        )
 
         # Revert the PCA transformation by multiplying by the standard deviation and adding the mean
         mean = tf.reduce_mean(original_patches, axis=0)
@@ -41,6 +43,9 @@ class BPCAUnpooling(tf.keras.layers.Layer):
         # Adjust the reshaping to achieve upsampling
         original_patches = tf.reshape(
             original_patches,
-            [h * self.pool_size, w * self.pool_size, c]
+            [-1, h, w, c]
         )
         return original_patches
+
+    def call(self, inputs):
+        return self.bpca_unpooling(inputs)
