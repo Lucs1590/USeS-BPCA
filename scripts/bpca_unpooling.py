@@ -12,6 +12,13 @@ class BPCAUnpooling(tf.keras.layers.Layer):
         self.patch_size = [1, self.pool_size, self.pool_size, 1]
         self.strides = [1, self.stride, self.stride, 1]
 
+        self.pca_components = tf.keras.layers.Dense(
+            units=self.n_components * self.expected_shape[2],
+            activation='tanh',
+            use_bias=False,
+            kernel_regularizer=tf.keras.regularizers.l2(0.001)
+        )
+
     def build(self, input_shape):
         super(BPCAUnpooling, self).build(input_shape)
 
@@ -20,32 +27,62 @@ class BPCAUnpooling(tf.keras.layers.Layer):
         # Compute the region of interest
         h, w, c = self.expected_shape  # block_height, block_width, block_channels
 
-        # Perform the reverse PCA transformation on the transformed patches
-        _, _, v = tf.linalg.svd(transformed_patches, compute_uv=True)
-        pca_components = tf.linalg.matrix_transpose(v[:, :self.n_components])
-        original_patches = tf.matmul(
+        # Pad the input patches with zeros
+        padded_patches = tf.pad(
             transformed_patches,
-            pca_components[..., tf.newaxis]
+            [
+                [0, 0],
+                [self.pool_size - 1, self.pool_size - 1],
+                [self.pool_size - 1, self.pool_size - 1],
+                [0, 0]
+            ], constant_values=0.0
+        )
+
+        # Learn the PCA components
+        pca_components = self.pca_components(padded_patches)
+        pca_components = tf.reshape(
+            pca_components,
+            [-1, h, w, self.n_components, 1]
+        )
+
+        # Reshape the transformed patches
+        transformed_patches = tf.reshape(transformed_patches, [-1, h, w, c])
+
+        # Perform the PCA decomposition
+        u, s, vh = tf.linalg.svd(transformed_patches, compute_uv=True)
+
+        # Reshape s (None, 32, 32, 32) to (None, 32, 32, 32, 1)
+        s = tf.reshape(s, [-1, h, w, self.n_components, 1])
+
+        # Multiply s (None, 32, 32, 32, 1) by pca_components (None, 32, 32, 1, 512)
+        mult = tf.matmul(s, pca_components)
+        mult = tf.reshape(mult, [-1, h, w, self.n_components * c])
+
+        transformed_patches = tf.matmul(
+            u[..., tf.newaxis, tf.newaxis],
+            mult
         )
 
         # Revert the PCA transformation by multiplying by the standard deviation and adding the mean
-        mean = tf.reduce_mean(original_patches, axis=0)
-        std = tf.math.reduce_std(original_patches, axis=0)
-        original_patches = (original_patches * std) + mean
+        mean = tf.reduce_mean(transformed_patches, axis=0)
+        std = tf.math.reduce_std(transformed_patches, axis=0)
+        transformed_patches = (transformed_patches * std) + mean
 
         # Reconstruct the original data
-        original_patches = tf.where(
-            tf.math.is_nan(original_patches),
+        transformed_patches = tf.where(
+            tf.math.is_nan(transformed_patches),
             0.0,
-            original_patches
+            transformed_patches
         )
 
-        # Adjust the reshaping to achieve upsampling
-        original_patches = tf.reshape(
-            original_patches,
+        # Upsample the original patches
+        transformed_patches = tf.reshape(
+            transformed_patches,
             [-1, h, w, c]
         )
-        return original_patches
+
+        # Return the output patches
+        return transformed_patches
 
     def call(self, inputs):
         return self.bpca_unpooling(inputs)
