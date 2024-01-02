@@ -2,8 +2,8 @@
 
 ## U-Net Semantic Segmentation Enhanced with BPCAPooling
 
-    [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-    [![GitHub stars](https://img.shields.io/github/stars/Lucs1590/USeS-BPCA.svg?style=social&label=Star&maxAge=2592000)]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/Lucs1590/USeS-BPCA.svg?style=social&label=Star&maxAge=2592000)]
 
 Welcome to the USeS-BPCA – a refined repository that brings forward a deep learning model for semantic image segmentation focusing on U-Net architectures. The key spotlight of this repository is the novel BPCAPooling (Block-based Principal Component Analysis Pooling), an advanced dimensional reduction method developed under my Master's thesis that'll soon be up for grabs.
 
