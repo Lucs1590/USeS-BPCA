@@ -2,7 +2,7 @@
 
 ## U-Net Semantic Segmentation Enhanced with BPCAPooling
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub stars](https://img.shields.io/github/stars/Lucs1590/USeS-BPCA.svg?style=social&label=Star&maxAge=2592000)
 
 Welcome to the USeS-BPCA – a refined repository that brings forward a deep learning model for semantic image segmentation focusing on U-Net architectures. The key spotlight of this repository is the novel BPCAPooling (Block-based Principal Component Analysis Pooling), an advanced dimensional reduction method developed under my Master's thesis that'll soon be up for grabs.
@@ -27,9 +27,9 @@ U-Net-Like with BPCAPooling:
 
 ### Features
 
-- Harness the power of U-Net and U-Net-Like architectures for semantic segmentation.
-- Experience BPCAPooling as a viable alternative to conventional pooling methods.
-- Explainability of AI with Xplique.
+- Harness the power of U-Net and U-Net-Like architectures for semantic segmentation;
+- Experience BPCAPooling as a viable alternative to conventional pooling methods;
+- Explainability of AI with Xplique to understand the model's predictions.
 
 ### Installation
 
@@ -37,11 +37,17 @@ Ready to explore the USeS-BPCA repository? Follow the steps below:
 
 1. Clone the USeS-BPCA repository:
 
-git clone <git@github.com>:Lucs1590/USeS-BPCA.git
+```sh
+git clone git@github.com:Lucs1590/USeS-BPCA.git
+```
+
 2. Install the required packages:
 
+```sh
 pip install -r requirements.txt
-3. Get hands-on with the notebooks folder to run the models.
+```
+
+3. Get hands-on with the ``notebooks`` folder to run the models.
 
 ### Contributing
 
@@ -49,12 +55,36 @@ We welcome your contributions. Feel free to raise issues or create pull requests
 
 ### License
 
-This project is licensed under the terms of the MIT license.
+This project is licensed under the terms of the Apache 2.0 license (see [LICENSE](https://github.com/Lucs1590/USeS-BPCA/blob/main/LICENSE) for details).
 
 ### Citation
 
-If you use this repository in your research, please consider citing it.
+If you use this repository in your research, please consider citing it. You can cite our work as follows:
+
+``` bibtex
+@misc{USeS-BPCA,
+  author = {Lucas de Brito Silva},
+  title = {USeS-BPCA: U-Net Semantic Segmentation Enhanced with BPCAPooling},
+  year = {2024},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/Lucs1590/USeS-BPCA}},
+}
+```
+
+If you use the BPCAPooling method, please consider citing it. You can cite our work as follows:
+
+``` bibtex
+@mastersthesis{Silva2024,
+  author = {Lucas de Brito Silva},
+  title = {Segmentação semântica de imagens com BPCAPooling: uma abordagem baseada em aprendizado profundo},
+  year = {2024},
+  school = {São Paulo State University (UNESP)},
+  address = {Rio Claro, SP, Brazil},
+  month = {February}
+}
+```
 
 ### Contact
 
-Got questions? Reach out for any queries via Here put your email.
+Got questions? Feel free to reach out to me via [email](mailto:lucasbsilva29@gmail.com) or [LinkedIn](https://www.linkedin.com/in/lucas-brito100/).
